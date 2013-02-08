@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="[% settings.charset %]">
+<title>MetaQuery</title>
+<link rel="stylesheet" href="[% request.uri_base %]/css/style.css">
+</head>
+<body>
+[% content %]
+<div id="footer">
+<p>
+Created by <a href="http://libriotech.no/">Libriotech</a>. 
+<a href="https://github.com/MagnusEnger/MetaQuery">Code</a>. 
+<a href="http://data.libriotech.no/metaquery/">Triplestore</a>. 
+<a href="http://data.libriotech.no/metaquery/data.txt">Data</a>. 
+Powered by <a href="http://perldancer.org/">Dancer</a> [% dancer_version %] and 
+<a href="https://github.com/semsol/arc2">arc2</a>.
+</p>
+</div>
+</body>
+</html>
