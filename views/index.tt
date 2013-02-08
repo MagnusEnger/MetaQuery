@@ -1,1 +1,16 @@
-[% t | eval %]
+[% IF t %]
+
+    [% t | eval %]
+
+[% ELSE %]
+
+<p>Examples:</p>
+<ul>
+<li><a href="/s/a">Title A</a></li>
+<li><a href="/s/b">Title B</a></li>
+<li><a href="/s/c">Title C</a></li>
+<li><a href="/s/d">Title D</a></li>
+<li><a href="/s/e">Title E</a></li>
+</ul>
+
+[% END %]
