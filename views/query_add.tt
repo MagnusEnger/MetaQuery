@@ -1,0 +1,18 @@
+<h1>Add query</h1>
+
+<form method="POST" action="/query/add">
+<fieldset>
+<legend>Add query</legend>
+<label for="slug">Slug:</label>
+<input type="text" name="slug" id="slug" required/>
+<br />
+<label for="query">SPARQL query:</label>
+<br />
+<textarea name="query" id="query" rows="10" cols="100" required></textarea>
+<br />
+<label for="template">Template:</label>
+<br />
+<textarea name="template" id="template" rows="10" cols="100" required></textarea>
+<br />
+<input type="submit" id="save" value="Save" />
+</fieldset>

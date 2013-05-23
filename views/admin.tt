@@ -1,0 +1,9 @@
+<h1>Admin</h1>
+
+<h2>Queries</h2>
+<ul>
+[% FOREACH q IN queries %]
+<li>[% q.query.uri_value %]</li>
+[% END %]
+<li><a href="/query/add">Add a query</a></li>
+</ul>
