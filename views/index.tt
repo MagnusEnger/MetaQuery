@@ -1,5 +1,6 @@
 [% IF t %]
 
+    [%# Process the main template that we found based on the type of the given URI %]
     [% t | eval %]
 
 [% ELSE %]
