@@ -52,7 +52,7 @@ get '/**' => sub {
         # if ( @querydata ) {
         debug '*** Data: ' . Dumper @querydata;
         $datapoints{ $key }{ 'data' } = \@querydata;
-    |    # } else {
+        # } else {
         #     debug "http_response: " . Dumper $q->http_response;
         #     debug "error: " .         $q->error;
         # }
