@@ -15,20 +15,26 @@ get '/**' => sub {
     my $uri = request->uri_base . request->uri;
     $uri =~ s/localhost:3000/metaquery.libriotech.no/;
     
-    # For some reason DISTINCT does not do what I expected here
+    ##  First, get all the queries and templates based on the type of the URI
+    
+    # Get the type query
     my $typesparql = _get_typesparql( $uri );
     debug $typesparql;
-    my %datapoints;
     my $typequery = RDF::Query::Client->new( $typesparql );
-    my $iterator = $typequery->execute( $endpoint );
-    # Pick out the unique rows
-    while (my $row = $iterator->next) {
+    my $queries = $typequery->execute( config->{sparql_endpoint} );
+    
+    # Simplify the datastructure in $queries a bit
+    # This will give us a hash of hashes, with the slugs as keys, 
+    # and two keys in the inner hash: sparql and template
+    my %datapoints;
+    while (my $row = $queries->next) {
         my $slug = $row->{slug}->literal_value;
         $datapoints{ $slug } = {
             sparql   => $row->{sparql}->literal_value,
             template => $row->{template}->literal_value,
         };
     }
+
 
     my $templatesparql = _get_templatesparql( $uri );
     my $templatequery = RDF::Query::Client->new( $templatesparql );
@@ -46,7 +52,7 @@ get '/**' => sub {
         # if ( @querydata ) {
         debug '*** Data: ' . Dumper @querydata;
         $datapoints{ $key }{ 'data' } = \@querydata;
-        # } else {
+    |    # } else {
         #     debug "http_response: " . Dumper $q->http_response;
         #     debug "error: " .         $q->error;
         # }
