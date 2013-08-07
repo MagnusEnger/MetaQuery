@@ -14,6 +14,15 @@ get '/' => sub {
 get '/**' => sub {
     my $uri = request->uri_base . request->uri;
     $uri =~ s/localhost:3000/metaquery.libriotech.no/;
+    my $data = get_data_from_uri( $uri );
+    template 'index', $data;
+};
+
+sub get_data_from_uri {
+
+    my ( $uri ) = @_;
+    my %data;
+    my %datapoints;
     
     ##  First, get all the queries and templates based on the type of the given URI
     
@@ -37,7 +46,6 @@ get '/**' => sub {
     # (It looked like the DISTINCT part of the type query did not
     # work at some point, this operation will have the side effect 
     # of ensuring we are working on unique slugs.)
-    my %datapoints;
     while (my $row = $queries->next) {
         my $slug = $row->{slug}->literal_value;
         $datapoints{ $slug } = {
@@ -56,8 +64,7 @@ get '/**' => sub {
     my $templateiterator = $templatequery->execute( $endpoint );
     # Grab the first template (there should not be more than one)
     my $t = $templateiterator->next;
-    my $template = $t->{template}->literal_value;
-    debug '*** Template: ' . $template;
+    $data{'t'} = $t->{template}->literal_value;
     
     ## Iterate over the queries, and collect their data in %datapoints
     
@@ -78,10 +85,10 @@ get '/**' => sub {
         $datapoints{ $key }{ 'data' } = \@querydata;
         
     }
-    
-    ## Process the template, with %datapoints as input
-    
-    template 'index', { t => $template, d => \%datapoints };
-};
+    $data{'d'} = \%datapoints;
+
+    return \%data;
+
+}
 
 true;
