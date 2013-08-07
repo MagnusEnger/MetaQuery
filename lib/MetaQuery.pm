@@ -20,7 +20,13 @@ get '/**' => sub {
     # Get the type query
     # $queries will be an iterator that holds a list of queries, each of which
     # is made up of a slug, a query and a template
-    my $typesparql = _get_typesparql( $uri );
+    my $typesparql = "SELECT DISTINCT ?slug ?sparql ?template WHERE {
+  <$uri> a ?type .
+  ?type <http://example.org/hasQuery> ?typequery .
+  ?typequery <http://example.org/hasSlug>     ?slug .
+  ?typequery <http://example.org/hasQuery>    ?sparql .
+  ?typequery <http://example.org/hasTemplate> ?template .
+}";
     debug $typesparql;
     my $typequery = RDF::Query::Client->new( $typesparql );
     my $queries = $typequery->execute( config->{sparql_endpoint} );
@@ -42,7 +48,10 @@ get '/**' => sub {
 
     ## Get the main template, based on the type of the given URI
     
-    my $templatesparql = _get_templatesparql( $uri );
+    my $templatesparql = "SELECT DISTINCT ?template  WHERE {
+  <$uri> a ?type .
+  ?type <http://example.org/hasTemplate> ?template .
+}";
     my $templatequery = RDF::Query::Client->new( $templatesparql );
     my $templateiterator = $templatequery->execute( $endpoint );
     # Grab the first template (there should not be more than one)
@@ -50,7 +59,7 @@ get '/**' => sub {
     my $template = $t->{template}->literal_value;
     debug '*** Template: ' . $template;
     
-    ## Iterate over the queries, and collect their data
+    ## Iterate over the queries, and collect their data in %datapoints
     
     foreach my $key ( keys %datapoints ) {
         
@@ -74,34 +83,5 @@ get '/**' => sub {
     
     template 'index', { t => $template, d => \%datapoints };
 };
-
-# Construct a query that collects all relevant queries, 
-# based on the type of the given URI
-sub _get_typesparql {
-
-    my $uri = shift;
-
-return "SELECT DISTINCT ?slug ?sparql ?template WHERE {
-  <$uri> a ?type .
-  ?type <http://example.org/hasQuery> ?typequery .
-  ?typequery <http://example.org/hasSlug>     ?slug .
-  ?typequery <http://example.org/hasQuery>    ?sparql .
-  ?typequery <http://example.org/hasTemplate> ?template .
-}";
-
-}
-
-# Construct a query that gets the "main" template, based
-# on the type of the given URI
-sub _get_templatesparql {
-
-    my $uri = shift;
-
-return "SELECT DISTINCT ?template  WHERE {
-  <$uri> a ?type .
-  ?type <http://example.org/hasTemplate> ?template .
-}";
-
-}
 
 true;
